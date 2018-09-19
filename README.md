@@ -67,6 +67,8 @@ kubectl exec vernemq-0 -- vmq-admin cluster show
 +---------------------------------------------------+-------+
 ```
 
+_You can view the status dashbaord by going to  http://vernemq-status:8888/status_
+
 # Cleanup
 
 ```sh

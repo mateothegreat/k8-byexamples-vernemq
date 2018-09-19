@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vernemq-status
+  labels:
+    app: vernemq
+spec:
+  selector:
+    app: vernemq
+  ports:
+  - port: 8888
+    name: www
