@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: 
+  name: vernemq
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: vernemq
+  serviceName: vernemq
+  template: 
+    metadata: 
+      labels: 
+        app: vernemq
+    spec:
+      serviceAccountName: vernemq
+      containers:
+      - name: vernemq
+        image: erlio/docker-vernemq:latest
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /usr/sbin/vmq-admin cluster leave node=VerneMQ@${MY_POD_NAME}.vernemq.${DOCKER_VERNEMQ_KUBERNETES_NAMESPACE}.svc.cluster.local ; sleep 1 ; /usr/sbin/vmq-admin cluster leave node=VerneMQ@${MY_POD_NAME}.vernemq.${DOCKER_VERNEMQ_KUBERNETES_NAMESPACE}.svc.cluster.local -k
+        ports:
+        - containerPort: 1883
+          name: mqtt
+        - containerPort: 8883
+          name: mqtts
+        - containerPort: 4369
+          name: epmd
+        - containerPort: 44053
+          name: vmq
+        #
+        # erlang ports
+        #
+        - containerPort: 9100
+        - containerPort: 9101
+        - containerPort: 9102
+        - containerPort: 9103
+        - containerPort: 9104
+        - containerPort: 9105
+        - containerPort: 9106
+        - containerPort: 9107
+        - containerPort: 9108
+        - containerPort: 9109
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+           fieldRef:
+             fieldPath: metadata.name
+        - name: DOCKER_VERNEMQ_DISCOVERY_KUBERNETES
+          value: "1"
+        - name: DOCKER_VERNEMQ_KUBERNETES_APP_LABEL
+          value: "vernemq"
+        - name: DOCKER_VERNEMQ_KUBERNETES_NAMESPACE
+          valueFrom:
+           fieldRef:
+             fieldPath: metadata.namespace
+        - name: DOCKER_VERNEMQ_ERLANG__DISTRIBUTION__PORT_RANGE__MINIMUM
+          value: "9100"
+        - name: DOCKER_VERNEMQ_ERLANG__DISTRIBUTION__PORT_RANGE__MAXIMUM
+          value: "9109"
+        - name: DOCKER_VERNEMQ_LISTENER__SSL__DEFAULT
+          value: "0.0.0.0:8883"
+        - name: DOCKER_VERNEMQ_LISTENER__SSL__CAFILE
+          value: "/etc/ssl/ca.crt"
+        - name: DOCKER_VERNEMQ_LISTENER__SSL__CERTFILE
+          value: "/etc/ssl/server.crt"
+        - name: DOCKER_VERNEMQ_LISTENER__SSL__KEYFILE
+          value: "/etc/ssl/server.key"
+        - name: DOCKER_VERNEMQ_VMQ_PASSWD__PASSWORD_FILE
+          value: "/etc/vernemq-passwd/vmq.passwd"
+        volumeMounts:
+        - mountPath: /etc/ssl
+          name: vernemq-certifications
+          readOnly: true
+        - mountPath: /etc/vernemq-passwd
+          name: vernemq-passwd
+          readOnly: true
+      volumes:
+      - name: vernemq-certifications
+        secret:
+          secretName: vernemq-certifications
+      - name: vernemq-passwd
+        secret:
+          secretName: vernemq-passwd

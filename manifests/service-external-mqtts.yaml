@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqtts
+  labels:
+    app: mqtts
+spec:
+  type: LoadBalancer
+  selector:
+    app: vernemq
+  ports:
+  - port: 8883
+    name: mqtts
