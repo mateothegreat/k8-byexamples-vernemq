@@ -8,7 +8,7 @@
 #
 #-->
 
-[![Clickity click](https://img.shields.io/badge/k8s%20by%20example%20yo-limit%20time-ff69b4.svg?style=flat-square)](https://k8.matthewdavis.io)
+[![Clickity click](https://img.shields.io/badge/k8s%20by%20example%20yo-its%20go%20time-ff69b4.svg?style=flat-square)](https://k8.matthewdavis.io)
 [![Twitter Follow](https://img.shields.io/twitter/follow/yomateod.svg?label=Follow&style=flat-square)](https://twitter.com/yomateod) [![Skype Contact](https://img.shields.io/badge/skype%20id-matthew@matthewdavis.io-blue.svg?style=flat-square)](skype:matthew@matthewdavis.io?chat)
 
 # VerneMQ (MQTT) @ Kubernetes
@@ -69,7 +69,7 @@ kubectl exec vernemq-0 -- vmq-admin cluster show
 
 # Cleanup
 
-``sh
+```sh
 $ make delete
 
 [ DELETING MANIFESTS/SERVICE-EXTERNAL-MQTTS.YAML ]:
